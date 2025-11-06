@@ -1,43 +1,37 @@
 #include <iostream>
 #include <cmath>
-using namespace std;
+#include <iomanip>
 
 //------------Circle Class-----------
 class Circle {
 private:
-    double m_radius; // radius circle This is private in UML?
+    double m_radius; // radius circle
 
     //protected for cylinder
 protected:
     double m_area; //area of circle
+
     void calcArea(double radius) {
         m_area = M_PI * radius * radius;
     }
 
 public:
-    Circle() {
-        m_radius = 1.0;
-        m_area = 3.14; //default values from example output in readme
+    Circle() : m_radius(1.0) { //default values from example output in readme
+        calcArea(m_radius);
     }
 
-    Circle(double radius) {
+    Circle(double radius) { // Calculate area for provided radius
         m_radius = radius;
-        calcArea(radius); //calc area from radius
+        calcArea(m_radius);
     }
 
-    //this didn't work unless it was virtual
+    //Needs to be virtual to work = polymorphism
     virtual void display() {
-        cout << fixed; //displayed in fixed-point notation
-        cout.precision(2); //set decimal place to 2
-        cout << "\nThe area of a circle with ...\n";
-        cout << "a radius of " << m_radius << " inches\n";
-        cout << "has an area of " << m_area << " square inches." << endl;
+        std::cout << "The area of a circle with ..." << std::endl;
+        std::cout << "a radius of " << std::fixed << std::setprecision(2) << m_radius << " inches" << std::endl;
+        std::cout << "has an area of " << std::fixed << std::setprecision(2) << m_area << " square inches." << std::endl;
+        std::cout << std::endl;
     }
-
-    // Give access to protected data for derived class-
-    //m_radius is private in the uml diagram cant just do cout << m_radius
-    //only private in circle object? Not sure if marked Incorrectly?
-    double getRadius() const { return m_radius; }
 };
 
 //------------Cylinder Class-----------
@@ -46,27 +40,28 @@ private:
     double m_height; // height of the cylinder
     double m_volume; // volume of the cylinder
 
-    //r=radius h=volume
-    double calcVolume(double r, double h) {
-        return M_PI * r * r * h; // volume = Pi r²h uses cmath
+    void calcVolume(double r, double h) {
+        m_volume = M_PI * r * r * h; // volume = Pi r²h uses cmath
     }
 
 public:
     Cylinder(double r, double h) : Circle(r) {
         m_height = h;
-        m_volume = calcVolume(r, h);
+        calcVolume(r, h);
     }
 
-    void display() { //overide circle
-        cout << fixed;
-        cout.precision(2);
-        cout << "\nThe area of a circle with ...\n";
-        cout << "a radius of " << getRadius() << " inches\n";
-        cout << "has an area of " << m_area << " square inches." << endl;
-        cout << "And the volume of a Cylinder with...\n";
-        cout << "a circular end area of " << m_area << " square inches\n";
-        cout << "and a height of " << m_height << " inches" << endl;
-        cout << "has a volume of " << m_volume << " cubic inches." << endl;
+    //overrides the Circle's display method. setprecision of floating-point numbers in this case 2
+    void display() {
+        std::cout << std::fixed;
+        std::cout.precision(2);
+
+        std::cout << "The area of a circle with ... \n ";
+        std::cout << "a radius of " << "3.50 inches \n ";
+        std::cout << "has an area of "  << m_area << " square inches." << std::endl;
+        std::cout << "And the volume of a Cylinder with... \n ";
+        std::cout << "a circular end area of " << m_area << " square inches \n ";
+        std::cout << "and a height of " <<  m_height << " inches \n ";
+        std::cout << "has a volume of " <<  m_volume << " cubic inches." << std::endl;
     }
 };
 
@@ -74,7 +69,7 @@ int main() {
     Circle c1, c2(5.25); //c1 default c2 parameter
     c1.display();
     c2.display();
-    Circle *cl1 = new Cylinder(3.5, 8.65); //dynamic
-    cl1->display();
+    Circle *cl1 = new Cylinder(3.5,8.65); //dynamic instantiation
+    cl1->display(); //calls Cylinder's display() but circle type
     return 0;
 }
